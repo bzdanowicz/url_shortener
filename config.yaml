@@ -1,0 +1,4 @@
+---
+DatabaseAddress: "mongodb+srv://url-shortener.i0wy2.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&tlsCertificateKeyFile=certs/atlas.pem"
+DatabaseName: "url_shortener"
+CacheAddress: "localhost:6379"

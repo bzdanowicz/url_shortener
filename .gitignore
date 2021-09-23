@@ -1,0 +1,21 @@
+# C extensions
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Media files
+.jpg
+.jpeg
+.png
+.avi
+.mp4
+
+# Certs
+.pem
