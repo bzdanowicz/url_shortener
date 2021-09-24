@@ -21,7 +21,7 @@ func encode(bytes []byte, digits uint32) string {
 	return base58.Encode(bytes)[:digits]
 }
 
-func EncodeURL(url string) (string, error) {
+func EncodeUrl(url string) (string, error) {
 	b, err := hash(url)
 	if err != nil {
 		return "", err

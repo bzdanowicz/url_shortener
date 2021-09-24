@@ -12,19 +12,21 @@ type StorageManager struct {
 	Cache    *Cache
 }
 
-func (manager *StorageManager) CreateShortURL(originalURL string) error {
-	encodedURL, err := utils.EncodeURL(originalURL)
+func (manager *StorageManager) CreateShortUrl(originalUrl string) (*ShortUrl, error) {
+	encodedUrl, err := utils.EncodeUrl(originalUrl)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	shortURL := &ShortURL{encodedURL, originalURL, 0}
-	_, err = manager.Database.Insert(shortURL, "links")
-
-	return err
+	shortUrl := &ShortUrl{encodedUrl, originalUrl, 0}
+	_, err = manager.Database.Insert(shortUrl, "links")
+	if err != nil {
+		return nil, err
+	}
+	return shortUrl, err
 }
 
-func (manager *StorageManager) UpdateStatistics(shortURL string) error {
-	document, err := manager.Database.FindShortURL(shortURL, "links")
+func (manager *StorageManager) UpdateStatistics(shortUrl string) error {
+	document, err := manager.Database.FindShortUrl(shortUrl, "links")
 	if err != nil {
 		return fmt.Errorf("couldn't update statistics: %w", err)
 	}
@@ -32,14 +34,14 @@ func (manager *StorageManager) UpdateStatistics(shortURL string) error {
 	return err
 }
 
-func (manager *StorageManager) GetOriginalURL(shortURL string) (string, error) {
-	originalURL, err := manager.Cache.Get(shortURL)
+func (manager *StorageManager) GetOriginalUrl(shortUrl string) (string, error) {
+	originalUrl, err := manager.Cache.Get(shortUrl)
 	if err != nil {
-		document, err := manager.Database.FindShortURL(shortURL, "links")
+		document, err := manager.Database.FindShortUrl(shortUrl, "links")
 		if err != nil {
 			return "", errors.New("couldn't find in cache and database")
 		}
 		return document.OriginalUrl, err
 	}
-	return originalURL, err
+	return originalUrl, err
 }

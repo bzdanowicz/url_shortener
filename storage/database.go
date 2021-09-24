@@ -16,7 +16,7 @@ type Database struct {
 	*mongo.Database
 }
 
-type ShortURL struct {
+type ShortUrl struct {
 	Id          string `bson:"_id,required"`
 	OriginalUrl string `bson:"original_url,required"`
 	Visits      uint32 `bson:"visits"`
@@ -70,8 +70,8 @@ func (db *Database) UpdateVisits(id interface{}, visits uint32, collectionName s
 	return
 }
 
-func (db *Database) FindShortURL(id interface{}, collectionName string) (document *ShortURL, err error) {
-	document = &ShortURL{}
+func (db *Database) FindShortUrl(id interface{}, collectionName string) (document *ShortUrl, err error) {
+	document = &ShortUrl{}
 	res, err := db.FindOne(id, collectionName)
 	if err != nil {
 		return nil, err
