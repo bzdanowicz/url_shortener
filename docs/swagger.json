@@ -1,0 +1,103 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/url": {
+            "post": {
+                "description": "shorten original link",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Creating new short link.",
+                "parameters": [
+                    {
+                        "description": "OriginalUrl",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/main.UrlCreationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Returns shorten url",
+                        "schema": {
+                            "$ref": "#/definitions/main.UrlCreationResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Failure response",
+                        "schema": {
+                            "$ref": "#/definitions/main.UrlCreationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/{url}": {
+            "get": {
+                "description": "redirect to the original page",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Link redirection.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "url",
+                        "name": "url",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "redirect to original page"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "main.UrlCreationRequest": {
+            "type": "object",
+            "required": [
+                "original_url"
+            ],
+            "properties": {
+                "original_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "main.UrlCreationResponse": {
+            "type": "object",
+            "required": [
+                "message",
+                "new_url",
+                "original_url"
+            ],
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "new_url": {
+                    "type": "string"
+                },
+                "original_url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

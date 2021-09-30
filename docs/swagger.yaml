@@ -1,0 +1,66 @@
+definitions:
+  main.UrlCreationRequest:
+    properties:
+      original_url:
+        type: string
+    required:
+    - original_url
+    type: object
+  main.UrlCreationResponse:
+    properties:
+      message:
+        type: string
+      new_url:
+        type: string
+      original_url:
+        type: string
+    required:
+    - message
+    - new_url
+    - original_url
+    type: object
+info:
+  contact: {}
+paths:
+  /{url}:
+    get:
+      consumes:
+      - application/json
+      description: redirect to the original page
+      parameters:
+      - description: url
+        in: path
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: redirect to original page
+      summary: Link redirection.
+  /url:
+    post:
+      consumes:
+      - application/json
+      description: shorten original link
+      parameters:
+      - description: OriginalUrl
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/main.UrlCreationRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Returns shorten url
+          schema:
+            $ref: '#/definitions/main.UrlCreationResponse'
+        "400":
+          description: Failure response
+          schema:
+            $ref: '#/definitions/main.UrlCreationResponse'
+      summary: Creating new short link.
+swagger: "2.0"
