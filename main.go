@@ -7,6 +7,7 @@ import (
 
 	"github.com/bzdanowicz/url_shortener/storage"
 	"github.com/bzdanowicz/url_shortener/utils"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,7 +44,20 @@ func CreateNewLink(c *gin.Context, storageManager *storage.StorageManager) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	url, err := storageManager.CreateShortUrl(request.OriginalUrl)
+
+	encodedUrl, err := utils.EncodeUrl(request.OriginalUrl)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	_, err = storageManager.GetOriginalUrl(encodedUrl)
+	if err == nil {
+		c.JSON(http.StatusAccepted, gin.H{"message": "Link already exists", "original_url": request.OriginalUrl, "new_url": encodedUrl})
+		return
+	}
+
+	url, err := storageManager.CreateShortUrl(request.OriginalUrl, encodedUrl)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -69,6 +83,7 @@ func createRouting(r *gin.Engine, storageManager *storage.StorageManager) {
 
 func runRouter(storageManager *storage.StorageManager) {
 	router := gin.Default()
+	router.Use(cors.Default())
 	createRouting(router, storageManager)
 	router.Run()
 }

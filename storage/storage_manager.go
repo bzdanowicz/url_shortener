@@ -3,8 +3,6 @@ package storage
 import (
 	"errors"
 	"fmt"
-
-	"github.com/bzdanowicz/url_shortener/utils"
 )
 
 type StorageManager struct {
@@ -12,13 +10,9 @@ type StorageManager struct {
 	Cache    *Cache
 }
 
-func (manager *StorageManager) CreateShortUrl(originalUrl string) (*ShortUrl, error) {
-	encodedUrl, err := utils.EncodeUrl(originalUrl)
-	if err != nil {
-		return nil, err
-	}
+func (manager *StorageManager) CreateShortUrl(originalUrl string, encodedUrl string) (*ShortUrl, error) {
 	shortUrl := &ShortUrl{encodedUrl, originalUrl, 0}
-	_, err = manager.Database.Insert(shortUrl, "links")
+	_, err := manager.Database.Insert(shortUrl, "links")
 	if err != nil {
 		return nil, err
 	}
