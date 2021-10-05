@@ -1,4 +1,4 @@
 ---
-DatabaseAddress: "mongodb+srv://cluster0.z4ms5.mongodb.net/myFirstDatabase?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&tlsCertificateKeyFile=certs/db.pem"
+DatabaseAddress: "mongodb://root:root@mongo:27017/"
 DatabaseName: "url_shortener"
 CacheAddress: "localhost:6379"

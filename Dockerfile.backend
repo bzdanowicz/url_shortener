@@ -1,0 +1,21 @@
+FROM golang:1.16-alpine as builder
+
+WORKDIR /src
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+COPY . ./
+
+RUN go build -o /url_shortener
+
+FROM alpine as base
+
+WORKDIR /app
+
+COPY --from=builder /url_shortener .
+COPY config.yaml .
+
+CMD [ "./url_shortener" ]
+
+

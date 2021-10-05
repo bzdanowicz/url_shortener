@@ -1,0 +1,38 @@
+version: "3.5"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      REACT_APP_API_URL: "http://localhost:8080"
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongo
+      - redis
+
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    expose:
+      - "27017"
+
+  redis:
+    image: redis:alpine
+    expose:
+      - "6379"
