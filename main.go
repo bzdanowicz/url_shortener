@@ -27,24 +27,6 @@ func initializeApplication(ctx context.Context) *storage.StorageManager {
 	return &storage.StorageManager{Database: database, Cache: cache}
 }
 
-// HandleRedirect godoc
-// @Summary Link redirection.
-// @Description redirect to the original page
-// @Accept json
-// @Produce json
-// @Param url path string true "url"
-// @Success 302 "redirect to original page"
-// @Router /{url} [get]
-func HandleRedirect(c *gin.Context, storageManager *storage.StorageManager) {
-	url := c.Param("url")
-	originalUrl, err := storageManager.GetOriginalUrl(url)
-	if err != nil {
-		c.Redirect(http.StatusFound, "/")
-	}
-	go storageManager.UpdateStatistics(url)
-	c.Redirect(http.StatusFound, originalUrl)
-}
-
 type UrlCreationRequest struct {
 	OriginalUrl string `json:"original_url" binding:"required"`
 }
@@ -55,8 +37,33 @@ type UrlCreationResponse struct {
 	NewUrl      string `json:"new_url" binding:"required"`
 }
 
+type UrlSearchResponse struct {
+	Message     string `json:"message" binding:"required"`
+	OriginalUrl string `json:"original_url" binding:"required"`
+	NewUrl      string `json:"new_url" binding:"required"`
+}
+
+// FindOriginalUrl godoc
+// @Summary Get original url.
+// @Description returns the original page url
+// @Accept json
+// @Produce json
+// @Param url path string true "url"
+// @Success 202 "returns the original page url"
+// @Router /{url} [get]
+func FindOriginalUrl(c *gin.Context, storageManager *storage.StorageManager) {
+	url := c.Param("url")
+	originalUrl, err := storageManager.GetOriginalUrl(url)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, &UrlSearchResponse{"Link does not exist", "", ""})
+		return
+	}
+	go storageManager.UpdateStatistics(url)
+	c.JSON(http.StatusAccepted, &UrlSearchResponse{"Link exists", originalUrl, url})
+}
+
 // CreateNewLink godoc
-// @Summary Creating new short link.
+// @Summary Creating new short link
 // @Description shorten original link
 // @Accept json
 // @Produce json
@@ -100,7 +107,7 @@ func createRouting(r *gin.Engine, storageManager *storage.StorageManager) {
 	})
 
 	r.GET("/:url", func(c *gin.Context) {
-		HandleRedirect(c, storageManager)
+		FindOriginalUrl(c, storageManager)
 	})
 
 	r.POST("/url", func(c *gin.Context) {
