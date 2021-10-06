@@ -12,9 +12,10 @@ async function redirectOriginalUrl(path) {
           'Content-Type': 'application/json',
         }
       })
+      const withHttp = url => !/^https?:\/\//i.test(url) ? `http://${url}` : url;
       const json = await response.json()
-      const originalUrl = json["original_url"] || "/"
-      window.location.href = originalUrl;
+      const originalUrl = withHttp(json["original_url"]) || "/"
+      window.location.href = originalUrl
     } catch(error) {
         window.location.href = "/"
     }
